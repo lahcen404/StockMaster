@@ -20,15 +20,10 @@
           <label for="nomProduit" class="block text-gray-700 font-medium mb-2">Nom de Produit</label>
           <input type="text" id="taskTitle"
                  class="w-full border border-gray-300 rounded p-2 drop-shadow-md "
-                 placeholder="Entrer levNom de Produit" >
+                 placeholder="Entrer le Nom de Produit" >
         </div>
         
-          <div>
-          <label for="description" class="block text-gray-700 font-medium mb-2">Description</label>
-          <input type="text" id="taskTitle"
-                 class="w-full border border-gray-300 rounded p-2 drop-shadow-md "
-                 placeholder="Entrer description" >
-        </div>
+         
         
           <div>
           <label for="quantity" class="block text-gray-700 font-medium mb-2">Quantity en stock</label>
