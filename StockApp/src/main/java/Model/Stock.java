@@ -3,6 +3,7 @@ package Model;
 public class Stock {
 
 	private int id;
+	private String nom;
 	private int quantity;
 	private Float PrixUnite;
 	private String Category;
@@ -10,7 +11,7 @@ public class Stock {
 	
 	
 	
-	public Stock( int quantity, Float prixUnite, String category, String description) {
+	public Stock( int quantity,String nom, Float prixUnite, String category, String description) {
 		
 		super();
 		this.quantity = quantity;
@@ -21,6 +22,17 @@ public class Stock {
 
 
 
+	public String getNom() {
+		return nom;
+	}
+
+
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+	
+	
 	public int getQuantity() {
 		return quantity;
 	}
