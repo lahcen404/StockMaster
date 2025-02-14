@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    
+    
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,5 +64,34 @@
     </form>
   </div>
 </section>
+	<section>
+		<div>
+			<table id="produitsTable"
+				class="mt-8 w-full bg-white rounded-lg shadow-md">
+				<thead>
+					<tr class="bg-gray-200">
+						<th class="px-4 py-2">Id</th>
+						<th class="px-4 py-2">Nom</th>
+						<th class="px-4 py-2">Description</th>
+						<th class="px-4 py-2">Quantity en stock</th>
+						<th class="px-4 py-2">Prix unitaire</th>
+						<th class="px-4 py-2">Category</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="produit" items="${listProduit}">
+						<tr class="px-4 py-2 mx-4">
+							<td class="px-4 py-2 "><c:out value="${produit.id}" /></td>
+							<td class="px-4 py-2"><c:out value="${produit.nom}" /></td>
+							<td class="px-4 py-2"><c:out value="${produit.description}" /></td>
+							<td class="px-4 py-2"><c:out value="${produit.quantite}" /></td>
+							<td class="px-4 py-2"><c:out value="${produit.prix}" /></td>
+							<td class="px-4 py-2"><c:out value="${produit.categorie}" /></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+	</section>
 </body>
 </html>

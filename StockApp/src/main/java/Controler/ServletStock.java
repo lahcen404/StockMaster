@@ -3,37 +3,35 @@ package Controler;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import dao.StockDAO;
-import model.Stock;
+import Model.Stock;
 
-/**
- * Servlet implementation class ServletStock
- */
-@WebServlet("/")
+@WebServlet("/stocks/*")
 public class ServletStock extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private StockDAO stockDAO;
 
-    public ServletStock() {
-        this.stockDAO = new StockDAO();
+    public void init() {
+        stockDAO = new StockDAO();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getServletPath();
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getPathInfo();
 
         try {
             switch (action) {
-                case "/new":
-                    showNewForm(request, response);
-                    break;
                 case "/insert":
                     insertStock(request, response);
                     break;
@@ -50,45 +48,44 @@ public class ServletStock extends HttpServlet {
                     listStock(request, response);
                     break;
             }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 
     private void listStock(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        List<Stock> listStock = stockDAO.selectAllStock();
-        request.setAttribute("listStock", listStock);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("Stock-list.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("Stock-form.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        Stock existingStock = stockDAO.selectStock(id);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("Stock-form.jsp");
-        request.setAttribute("stock", existingStock);
-        dispatcher.forward(request, response);
+        List<Stock> stockList = stockDAO.getAllStocks();
+        request.setAttribute("listStock", stockList);
+        request.getRequestDispatcher("/stock-list.jsp").forward(request, response);
     }
 
     private void insertStock(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
         String nom = request.getParameter("nom");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
-        float prixUnite = Float.parseFloat(request.getParameter("PrixUnite"));
-        String category = request.getParameter("Category");
-        String description = request.getParameter("Description");
+        float prixUnite = Float.parseFloat(request.getParameter("prixUnite"));
+        String category = request.getParameter("category");
+        String description = request.getParameter("description");
 
         Stock newStock = new Stock(nom, quantity, prixUnite, category, description);
         stockDAO.insertStock(newStock);
-        response.sendRedirect("list");
+        response.sendRedirect(request.getContextPath() + "/stocks");
+    }
+
+    private void deleteStock(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        stockDAO.deleteStock(id);
+        response.sendRedirect(request.getContextPath() + "/stocks");
+    }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Stock existingStock = stockDAO.getStockById(id);
+        request.setAttribute("stock", existingStock);
+        request.getRequestDispatcher("/stock-form.jsp").forward(request, response);
     }
 
     private void updateStock(HttpServletRequest request, HttpServletResponse response)
@@ -96,23 +93,12 @@ public class ServletStock extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         String nom = request.getParameter("nom");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
-        float prixUnite = Float.parseFloat(request.getParameter("PrixUnite"));
-        String category = request.getParameter("Category");
-        String description = request.getParameter("Description");
+        float prixUnite = Float.parseFloat(request.getParameter("prixUnite"));
+        String category = request.getParameter("category");
+        String description = request.getParameter("description");
 
         Stock stock = new Stock(id, nom, quantity, prixUnite, category, description);
         stockDAO.updateStock(stock);
-        response.sendRedirect("list");
-    }
-
-    private void deleteStock(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        stockDAO.deleteStock(id);
-        response.sendRedirect("list");
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+        response.sendRedirect(request.getContextPath() + "/stocks");
     }
 }

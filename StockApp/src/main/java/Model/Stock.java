@@ -3,31 +3,31 @@ package Model;
 public class Stock {
     private int id;
     private String nom;
+    private String description;
     private int quantity;
-    private Float PrixUnite;
-    private String Category;
-    private String Description;
+    private float prixUnite;
+    private String category;
 
-    // Constructor without ID (for inserting a new stock)
-    public Stock(String nom, int quantity, Float prixUnite, String category, String description) {
-        this.nom = nom;
-        this.quantity = quantity;
-        this.PrixUnite = prixUnite;
-        this.Category = category;
-        this.Description = description;
-    }
-
-    // Constructor with ID (for retrieving or updating an existing stock)
+    // Constructor with all 
     public Stock(int id, String nom, int quantity, float prixUnite, String category, String description) {
         this.id = id;
         this.nom = nom;
         this.quantity = quantity;
-        this.PrixUnite = prixUnite;
-        this.Category = category;
-        this.Description = description;
+        this.prixUnite = prixUnite;
+        this.category = category;
+        this.description = description;
     }
 
-    // Getter and Setter for ID
+    // Constructor without ID 
+    public Stock(String nom, int quantity, float prixUnite, String category, String description) {
+        this.nom = nom;
+        this.quantity = quantity;
+        this.prixUnite = prixUnite;
+        this.category = category;
+        this.description = description;
+    }
+
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -36,7 +36,6 @@ public class Stock {
         this.id = id;
     }
 
-    // Getter and Setter for Nom
     public String getNom() {
         return nom;
     }
@@ -45,7 +44,14 @@ public class Stock {
         this.nom = nom;
     }
 
-    // Getter and Setter for Quantity
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -54,30 +60,19 @@ public class Stock {
         this.quantity = quantity;
     }
 
-    // Getter and Setter for PrixUnite
-    public Float getPrixUnite() {
-        return PrixUnite;
+    public float getPrixUnite() {
+        return prixUnite;
     }
 
-    public void setPrixUnite(Float prixUnite) {
-        this.PrixUnite = prixUnite;
+    public void setPrixUnite(float prixUnite) {
+        this.prixUnite = prixUnite;
     }
 
-    // Getter and Setter for Category
     public String getCategory() {
-        return Category;
+        return category;
     }
 
     public void setCategory(String category) {
-        this.Category = category;
-    }
-
-    // Getter and Setter for Description
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String description) {
-        this.Description = description;
+        this.category = category;
     }
 }

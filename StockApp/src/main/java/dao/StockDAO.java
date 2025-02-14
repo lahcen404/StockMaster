@@ -7,91 +7,105 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import Model.Stock;
-
-// CRUD Database
 
 public class StockDAO {
     private String jdbcURL = "jdbc:mysql://localhost:3306/Stock?useSSL=false";
     private String jdbcUsername = "root";
     private String jdbcPassword = "lahcen123";
 
-    private static final String INSERT_STOCK_SQL = "INSERT INTO Produits (nom, description, quantite_en_stock, prix_unitaire, categorie) VALUES (?, ?, ?, ?, ?);";
-    private static final String SELECT_STOCK_BY_ID = "SELECT id, nom, description, quantite_en_stock, prix_unitaire, categorie FROM Produits WHERE id=?";
-    private static final String SELECT_ALL_STOCK = "SELECT * FROM Produits";
-    private static final String DELETE_STOCK_SQL = "DELETE FROM Produits WHERE id=?";
-    private static final String UPDATE_STOCK_SQL = "UPDATE Produits SET nom=?, description=?, quantite_en_stock=?, prix_unitaire=?, categorie=? WHERE id=?;";
+    private static final String INSERT_STOCK_SQL = "INSERT INTO stock (nom, quantity, prixUnite, category, description) VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_ALL_STOCKS = "SELECT * FROM stock";
+    private static final String DELETE_STOCK_SQL = "DELETE FROM stock WHERE id = ?";
+    private static final String SELECT_STOCK_BY_ID = "SELECT * FROM stock WHERE id = ?";
+    private static final String UPDATE_STOCK_SQL = "UPDATE stock SET nom = ?, quantity = ?, prixUnite = ?, category = ?, description = ? WHERE id = ?";
 
-    public StockDAO() {}
-
-    protected Connection getConnection() {
-        Connection connection = null;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Updated Driver
-            connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return connection;
+    protected Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
     }
 
-    public void insertStock(Stock stock) throws SQLException { // Renamed method to insertStock
-        System.out.println(INSERT_STOCK_SQL);
+    public void insertStock(Stock stock) {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STOCK_SQL)) {
             preparedStatement.setString(1, stock.getNom());
-            preparedStatement.setString(2, stock.getDescription());
-            preparedStatement.setInt(3, stock.getQuantity());
-            preparedStatement.setFloat(4, stock.getPrixUnite());
-            preparedStatement.setString(5, stock.getCategory());
+            preparedStatement.setInt(2, stock.getQuantity());
+            preparedStatement.setFloat(3, stock.getPrixUnite());
+            preparedStatement.setString(4, stock.getCategory());
+            preparedStatement.setString(5, stock.getDescription());
 
-            System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            printSQLException(e);
+            e.printStackTrace();
         }
     }
 
-    public Stock selectStock(int id) {
+    public List<Stock> getAllStocks() {
+        List<Stock> stocks = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STOCKS);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nom = resultSet.getString("nom");
+                int quantity = resultSet.getInt("quantity");
+                float prixUnite = resultSet.getFloat("prixUnite");
+                String category = resultSet.getString("category");
+                String description = resultSet.getString("description");
+
+                stocks.add(new Stock(id, nom, quantity, prixUnite, category, description));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stocks;
+    }
+
+    public void deleteStock(int id) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STOCK_SQL)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Stock getStockById(int id) {
         Stock stock = null;
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STOCK_BY_ID)) {
             preparedStatement.setInt(1, id);
-            System.out.println(preparedStatement);
-            ResultSet res = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (res.next()) {
-                String nom = res.getString("nom");
-                String description = res.getString("description");
-                int quantiteEnStock = res.getInt("quantite_en_stock");
-                float prixUnitaire = res.getFloat("prix_unitaire");
-                String categorie = res.getString("categorie");
+            if (resultSet.next()) {
+                String nom = resultSet.getString("nom");
+                int quantity = resultSet.getInt("quantity");
+                float prixUnite = resultSet.getFloat("prixUnite");
+                String category = resultSet.getString("category");
+                String description = resultSet.getString("description");
 
-                // Fixing parameter order for constructor
-                stock = new Stock(id, nom, quantiteEnStock, prixUnitaire, categorie, description);
+                stock = new Stock(id, nom, quantity, prixUnite, category, description);
             }
         } catch (SQLException e) {
-            printSQLException(e);
+            e.printStackTrace();
         }
         return stock;
     }
 
-    private void printSQLException(SQLException ex) {
-        for (Throwable e : ex) {
-            if (e instanceof SQLException) {
-                e.printStackTrace(System.err);
-                System.err.println("SQLState: " + ((SQLException) e).getSQLState());
-                System.err.println("Error Code: " + ((SQLException) e).getErrorCode());
-                System.err.println("Message: " + e.getMessage());
-                Throwable t = ex.getCause();
-                while (t != null) {
-                    System.out.println("Cause: " + t);
-                    t = t.getCause();
-                }
-            }
+    public void updateStock(Stock stock) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STOCK_SQL)) {
+            preparedStatement.setString(1, stock.getNom());
+            preparedStatement.setInt(2, stock.getQuantity());
+            preparedStatement.setFloat(3, stock.getPrixUnite());
+            preparedStatement.setString(4, stock.getCategory());
+            preparedStatement.setString(5, stock.getDescription());
+            preparedStatement.setInt(6, stock.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
