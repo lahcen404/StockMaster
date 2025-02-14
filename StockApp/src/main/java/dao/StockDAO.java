@@ -1,111 +1,112 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import Model.Stock;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import Model.Stock;
 
 public class StockDAO {
     private String jdbcURL = "jdbc:mysql://localhost:3306/Stock?useSSL=false";
-    private String jdbcUsername = "root";
-    private String jdbcPassword = "lahcen123";
+    private String jdbcUsername = "root";  
+    private String jdbcPassword = "lahcen123"; 
 
-    private static final String INSERT_STOCK_SQL = "INSERT INTO stock (nom, quantity, prixUnite, category, description) VALUES (?, ?, ?, ?, ?)";
-    private static final String SELECT_ALL_STOCKS = "SELECT * FROM stock";
-    private static final String DELETE_STOCK_SQL = "DELETE FROM stock WHERE id = ?";
-    private static final String SELECT_STOCK_BY_ID = "SELECT * FROM stock WHERE id = ?";
-    private static final String UPDATE_STOCK_SQL = "UPDATE stock SET nom = ?, quantity = ?, prixUnite = ?, category = ?, description = ? WHERE id = ?";
+    private static final String INSERT_STOCK_SQL = "INSERT INTO Produits (nom, description, quantite_en_stock, prix_unitaire, categorie) VALUES (?, ?, ?, ?, ?)";
+    private static final String SELECT_ALL_STOCK = "SELECT * FROM Produits";
+    private static final String SELECT_STOCK_BY_ID = "SELECT * FROM Produits WHERE ID = ?";
+    private static final String UPDATE_STOCK_SQL = "UPDATE Produits SET nom = ?, description = ?, quantite_en_stock = ?, prix_unitaire = ?, categorie = ? WHERE ID = ?";
+    private static final String DELETE_STOCK_SQL = "DELETE FROM Produits WHERE ID = ?";
 
-    protected Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+    // Connection method
+    protected Connection getConnection() {
+        Connection connection = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println(connection);
+        return connection;
     }
 
-    public void insertStock(Stock stock) {
+    // Insert stock
+    public void insertStock(Stock stock) throws SQLException {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_STOCK_SQL)) {
             preparedStatement.setString(1, stock.getNom());
-            preparedStatement.setInt(2, stock.getQuantity());
-            preparedStatement.setFloat(3, stock.getPrixUnite());
-            preparedStatement.setString(4, stock.getCategory());
-            preparedStatement.setString(5, stock.getDescription());
-
+            preparedStatement.setString(2, stock.getDescription());
+            preparedStatement.setInt(3, stock.getQuantiteEnStock());
+            preparedStatement.setDouble(4, stock.getPrixUnitaire());
+            preparedStatement.setString(5, stock.getCategorie());
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
-    public List<Stock> getAllStocks() {
+    // Retrieve all stocks
+    public List<Stock> selectAllStock() throws SQLException {
         List<Stock> stocks = new ArrayList<>();
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STOCKS);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String nom = resultSet.getString("nom");
-                int quantity = resultSet.getInt("quantity");
-                float prixUnite = resultSet.getFloat("prixUnite");
-                String category = resultSet.getString("category");
-                String description = resultSet.getString("description");
-
-                stocks.add(new Stock(id, nom, quantity, prixUnite, category, description));
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STOCK);
+             ResultSet rs = preparedStatement.executeQuery()) {
+            while (rs.next()) {
+                stocks.add(new Stock(
+                    rs.getInt("ID"),
+                    rs.getString("nom"),
+                    rs.getString("description"),
+                    rs.getInt("quantite_en_stock"),
+                    rs.getDouble("prix_unitaire"),
+                    rs.getString("categorie")
+                ));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return stocks;
     }
 
-    public void deleteStock(int id) {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STOCK_SQL)) {
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Stock getStockById(int id) {
+    // Retrieve stock by ID
+    public Stock selectStock(int id) throws SQLException {
         Stock stock = null;
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STOCK_BY_ID)) {
             preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                String nom = resultSet.getString("nom");
-                int quantity = resultSet.getInt("quantity");
-                float prixUnite = resultSet.getFloat("prixUnite");
-                String category = resultSet.getString("category");
-                String description = resultSet.getString("description");
-
-                stock = new Stock(id, nom, quantity, prixUnite, category, description);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                stock = new Stock(
+                    rs.getInt("ID"),
+                    rs.getString("nom"),
+                    rs.getString("description"),
+                    rs.getInt("quantite_en_stock"),
+                    rs.getDouble("prix_unitaire"),
+                    rs.getString("categorie")
+                );
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return stock;
     }
 
-    public void updateStock(Stock stock) {
+    // Update stock
+    public void updateStock(Stock stock) throws SQLException {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_STOCK_SQL)) {
             preparedStatement.setString(1, stock.getNom());
-            preparedStatement.setInt(2, stock.getQuantity());
-            preparedStatement.setFloat(3, stock.getPrixUnite());
-            preparedStatement.setString(4, stock.getCategory());
-            preparedStatement.setString(5, stock.getDescription());
+            preparedStatement.setString(2, stock.getDescription());
+            preparedStatement.setInt(3, stock.getQuantiteEnStock());
+            preparedStatement.setDouble(4, stock.getPrixUnitaire());
+            preparedStatement.setString(5, stock.getCategorie());
             preparedStatement.setInt(6, stock.getId());
-
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        }
+    }
+
+    // Delete stock
+    public void deleteStock(int id) throws SQLException {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_STOCK_SQL)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
         }
     }
 }

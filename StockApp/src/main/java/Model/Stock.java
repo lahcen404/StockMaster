@@ -4,27 +4,27 @@ public class Stock {
     private int id;
     private String nom;
     private String description;
-    private int quantity;
-    private float prixUnite;
-    private String category;
+    private int quantiteEnStock;
+    private double prixUnitaire;
+    private String categorie;
 
-    // Constructor with all 
-    public Stock(int id, String nom, int quantity, float prixUnite, String category, String description) {
-        this.id = id;
+    // Constructor for inserting a new stock
+    public Stock(String nom, String description, int quantiteEnStock, double prixUnitaire, String categorie) {
         this.nom = nom;
-        this.quantity = quantity;
-        this.prixUnite = prixUnite;
-        this.category = category;
         this.description = description;
+        this.quantiteEnStock = quantiteEnStock;
+        this.prixUnitaire = prixUnitaire;
+        this.categorie = categorie;
     }
 
-    // Constructor without ID 
-    public Stock(String nom, int quantity, float prixUnite, String category, String description) {
+    // Constructor for retrieving/updating an existing stock
+    public Stock(int id, String nom, String description, int quantiteEnStock, double prixUnitaire, String categorie) {
+        this.id = id;
         this.nom = nom;
-        this.quantity = quantity;
-        this.prixUnite = prixUnite;
-        this.category = category;
         this.description = description;
+        this.quantiteEnStock = quantiteEnStock;
+        this.prixUnitaire = prixUnitaire;
+        this.categorie = categorie;
     }
 
     // Getters and Setters
@@ -52,27 +52,27 @@ public class Stock {
         this.description = description;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getQuantiteEnStock() {
+        return quantiteEnStock;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQuantiteEnStock(int quantiteEnStock) {
+        this.quantiteEnStock = quantiteEnStock;
     }
 
-    public float getPrixUnite() {
-        return prixUnite;
+    public double getPrixUnitaire() {
+        return prixUnitaire;
     }
 
-    public void setPrixUnite(float prixUnite) {
-        this.prixUnite = prixUnite;
+    public void setPrixUnitaire(double prixUnitaire) {
+        this.prixUnitaire = prixUnitaire;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategorie() {
+        return categorie;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategorie(String categorie) {
+        this.categorie = categorie;
     }
 }
