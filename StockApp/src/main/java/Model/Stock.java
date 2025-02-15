@@ -7,7 +7,7 @@ public class Stock {
     private int quantiteEnStock;
     private double prixUnitaire;
     private String categorie;
-
+ 
     // Constructor for inserting a new stock
     public Stock(String nom, String description, int quantiteEnStock, double prixUnitaire, String categorie) {
         this.nom = nom;

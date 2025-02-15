@@ -35,9 +35,11 @@ public class ServletStock extends HttpServlet {
                 case "/insert":
                 	insertStock(request, response);
                     break;
-               
-              
+                case "/list":
+                    listStock(request, response);
+                    break;
                 default:
+                    listStock(request, response);
                     break;
             }
         } catch (SQLException ex) {
@@ -55,12 +57,16 @@ public class ServletStock extends HttpServlet {
 
         Stock newStock = new Stock(nom, description, quantity, prixUnitaire, category);
         stockDAO.insertStock(newStock);
-        response.sendRedirect("stocks");
+        response.sendRedirect("list");
     }
 
     private void listStock(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<Stock> listStock = stockDAO.selectAllStock();
+        
+        // tester list 
+        listStock.forEach(product -> System.out.println(product.getNom()));
+        
         request.setAttribute("listStock", listStock);
         RequestDispatcher dispatcher = request.getRequestDispatcher("Stock-list.jsp");
         dispatcher.forward(request, response);

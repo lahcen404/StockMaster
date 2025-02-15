@@ -20,7 +20,8 @@ public class StockDAO {
     protected Connection getConnection() {
         Connection connection = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            //Class.forName("com.mysql.jdbc.Driver");
+        	Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -52,6 +53,7 @@ public class StockDAO {
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_STOCK);
              ResultSet rs = preparedStatement.executeQuery()) {
+        	System.out.println( "connected on " + connection );
             while (rs.next()) {
                 stocks.add(new Stock(
                     rs.getInt("ID"),
