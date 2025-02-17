@@ -57,7 +57,7 @@ public class ServletStock extends HttpServlet {
 
         Stock newStock = new Stock(nom, description, quantity, prixUnitaire, category);
         stockDAO.insertStock(newStock);
-        response.sendRedirect("list");
+        response.sendRedirect(request.getContextPath() + "/list");
     }
 
     private void listStock(HttpServletRequest request, HttpServletResponse response)

@@ -29,8 +29,8 @@
                     <h3 class="text-center">List of Products</h3>
                     <hr>
                     <div class="container text-left">
-                        <a href="<%=request.getContextPath()%>/insert" class="btn btn-success">Add
-     New Product</a>
+                       <a href="index.jsp" class="btn btn-success">Add New Product</a>
+
                     </div>
                     <br>
                     <table class="table table-bordered">
@@ -46,29 +46,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="product" items="${listStock}">
-                                <tr>
-                                    <td>
-                                        <c:out value="${product.id}" />
-                                    </td>
-                                    <td>
-                                        <c:out value="${product.nom}" />
-                                    </td>
-                                    <td>
-                                        <c:out value="${product.prixUnitaire}" />
-                                    </td>
-                                    <td>
-                                        <c:out value="${product.categorie}" />
-                                    </td>
-                                    <td>
-                                        <c:out value="${product.quantiteEnStock}" />
-                                    </td>
-                                    <td>
-                                        <c:out value="${product.description}" />
-                                    </td>
-                                    <td><a href="edit?id=<c:out value='${product}' />">Edit</a> &nbsp;&nbsp;&nbsp;&nbsp; <a href="delete?id=<c:out value='${product.id}' />">Delete</a></td>
-                                </tr>
-                            </c:forEach>
+                          <c:forEach var="produit" items="${listStock}">
+    <tr>
+        <td><c:out value="${produit.id}" /></td>
+        <td><c:out value="${produit.nom}" /></td>
+        <td><c:out value="${produit.description}" /></td>
+        <td><c:out value="${produit.quantiteEnStock}" /></td>
+        <td><c:out value="${produit.prixUnitaire}" /></td>
+        <td><c:out value="${produit.categorie}" /></td>
+        <td><a href="edit?id=${produit.id}">Edit</a> | <a href="delete?id=${produit.id}">Delete</a></td>
+    </tr>
+</c:forEach>
                         </tbody>
                     </table>
                 </div>
